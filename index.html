@@ -1,0 +1,1764 @@
+```html
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MoonBot V6 ULTRA</title>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#02040a;
+    color:#fff;
+}
+
+/* =========================================================
+   CINEMATIC INTRO
+========================================================= */
+
+#intro{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:#000;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:opacity 1.2s ease;
+}
+
+.stars{
+    position:absolute;
+    inset:0;
+    background-image:
+    radial-gradient(2px 2px at 5% 12%,#fff,transparent),
+    radial-gradient(1px 1px at 14% 40%,#fff,transparent),
+    radial-gradient(2px 2px at 25% 20%,#fff,transparent),
+    radial-gradient(1px 1px at 34% 75%,#fff,transparent),
+    radial-gradient(2px 2px at 45% 35%,#fff,transparent),
+    radial-gradient(1px 1px at 57% 15%,#fff,transparent),
+    radial-gradient(2px 2px at 68% 65%,#fff,transparent),
+    radial-gradient(1px 1px at 79% 30%,#fff,transparent),
+    radial-gradient(2px 2px at 90% 15%,#fff,transparent),
+    radial-gradient(1px 1px at 96% 78%,#fff,transparent);
+    animation:starMove 8s linear infinite;
+}
+
+@keyframes starMove{
+    from{transform:scale(1)}
+    to{transform:scale(1.18)}
+}
+
+.moon{
+    position:absolute;
+    width:230px;
+    height:230px;
+    border-radius:50%;
+    background:
+    radial-gradient(circle at 23% 27%,#888 0 5%,transparent 6%),
+    radial-gradient(circle at 70% 25%,#777 0 8%,transparent 9%),
+    radial-gradient(circle at 40% 55%,#999 0 7%,transparent 8%),
+    radial-gradient(circle at 72% 67%,#666 0 10%,transparent 11%),
+    radial-gradient(circle at 25% 78%,#888 0 6%,transparent 7%),
+    linear-gradient(145deg,#fff,#555);
+    box-shadow:
+    0 0 35px #fff,
+    0 0 100px #9ff,
+    0 0 180px #48eaff55;
+    animation:moonIn 3s ease forwards;
+}
+
+@keyframes moonIn{
+    0%{
+        opacity:0;
+        transform:scale(.03);
+    }
+    100%{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+.scan{
+    position:absolute;
+    width:310px;
+    height:310px;
+    border:1px solid #45eeff77;
+    border-radius:50%;
+    animation:scan 2s linear infinite;
+}
+
+.scan:before{
+    content:"";
+    position:absolute;
+    inset:25px;
+    border:1px dashed #45eeff55;
+    border-radius:50%;
+}
+
+.scan:after{
+    content:"";
+    position:absolute;
+    top:50%;
+    left:-30px;
+    right:-30px;
+    height:1px;
+    background:#45eeff;
+    box-shadow:0 0 15px #45eeff;
+}
+
+@keyframes scan{
+    to{transform:rotate(360deg)}
+}
+
+.boot{
+    position:absolute;
+    left:5%;
+    bottom:5%;
+    width:90%;
+    max-width:850px;
+    color:#63faff;
+    font-family:monospace;
+    font-size:13px;
+    line-height:1.55;
+    text-shadow:0 0 8px #00ffff;
+}
+
+.boot span{
+    display:block;
+    opacity:0;
+}
+
+.boot .show{
+    animation:showBoot .25s forwards;
+}
+
+@keyframes showBoot{
+    to{opacity:1}
+}
+
+.mainTitle{
+    position:absolute;
+    text-align:center;
+    opacity:0;
+    animation:titleIn 1s ease 5.8s forwards;
+}
+
+.mainTitle h1{
+    margin:0;
+    font-size:clamp(42px,10vw,105px);
+    letter-spacing:8px;
+    text-shadow:
+    0 0 10px #fff,
+    0 0 30px #00ffff,
+    0 0 70px #00ffff;
+    animation:glitch 1.4s infinite;
+}
+
+.mainTitle p{
+    margin:7px;
+    font-family:monospace;
+    letter-spacing:3px;
+    color:#b9dce3;
+}
+
+@keyframes titleIn{
+    to{opacity:1}
+}
+
+@keyframes glitch{
+    0%,100%{transform:translate(0)}
+    20%{transform:translate(-2px,1px)}
+    40%{transform:translate(2px,-1px)}
+    60%{transform:translate(-1px,2px)}
+    80%{transform:translate(1px,-1px)}
+}
+
+.enterButton{
+    position:absolute;
+    bottom:6%;
+    padding:14px 48px;
+    border:1px solid #6fffff;
+    border-radius:30px;
+    background:#000b;
+    color:#fff;
+    cursor:pointer;
+    font-weight:bold;
+    letter-spacing:5px;
+    opacity:0;
+    animation:enterIn 1s ease 9s forwards;
+    box-shadow:0 0 20px #00ffff55;
+}
+
+.enterButton:hover{
+    background:#fff;
+    color:#000;
+    box-shadow:0 0 45px #fff;
+}
+
+@keyframes enterIn{
+    to{opacity:1}
+}
+
+/* =========================================================
+   APP
+========================================================= */
+
+#app{
+    display:none;
+    width:100%;
+    height:100%;
+    background:
+    radial-gradient(circle at 90% 0%,#12334c,#050914 40%,#010207);
+}
+
+.topbar{
+    height:64px;
+    display:flex;
+    align-items:center;
+    padding:0 16px;
+    border-bottom:1px solid #ffffff18;
+    background:#05070ddd;
+    backdrop-filter:blur(20px);
+}
+
+.logo{
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing:3px;
+}
+
+.status{
+    margin-left:18px;
+    font-size:11px;
+    color:#58ffab;
+}
+
+.topActions{
+    margin-left:auto;
+    display:flex;
+    gap:7px;
+}
+
+.topBtn{
+    padding:8px 11px;
+    border:1px solid #ffffff1d;
+    border-radius:9px;
+    background:#ffffff08;
+    color:#fff;
+    cursor:pointer;
+}
+
+.topBtn:hover{
+    background:#ffffff18;
+}
+
+.main{
+    height:calc(100% - 129px);
+    display:flex;
+}
+
+.sidebar{
+    width:245px;
+    border-right:1px solid #ffffff12;
+    padding:15px;
+    background:#02050b99;
+    overflow:auto;
+}
+
+.sideTitle{
+    color:#7defff;
+    font-size:11px;
+    letter-spacing:2px;
+    margin-bottom:12px;
+}
+
+.mode{
+    width:100%;
+    padding:11px;
+    margin-bottom:7px;
+    border:1px solid #ffffff14;
+    border-radius:10px;
+    background:#ffffff06;
+    color:#fff;
+    cursor:pointer;
+    text-align:left;
+}
+
+.mode:hover,
+.mode.active{
+    border-color:#4eeeff88;
+    background:#4eeeff12;
+}
+
+.info{
+    margin-top:18px;
+    padding:12px;
+    border:1px solid #ffffff12;
+    border-radius:12px;
+    font-size:11px;
+    color:#91a0aa;
+    line-height:1.6;
+}
+
+.chatArea{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat{
+    flex:1;
+    overflow:auto;
+    padding:22px;
+}
+
+.message{
+    max-width:900px;
+    margin:0 auto 14px;
+    padding:14px 17px;
+    border-radius:17px;
+    border:1px solid #ffffff12;
+    background:#ffffff07;
+    line-height:1.65;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+
+.message.user{
+    border-color:#4eeeff55;
+    background:#4eeeff09;
+}
+
+.message.bot{
+    box-shadow:0 0 20px #00ffff05;
+}
+
+.label{
+    font-size:10px;
+    color:#6eefff;
+    letter-spacing:2px;
+    margin-bottom:6px;
+}
+
+.typing{
+    color:#70eaff;
+    font-family:monospace;
+    animation:blink .7s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:.3}
+}
+
+.inputbar{
+    height:65px;
+    padding:10px 14px;
+    display:flex;
+    gap:8px;
+    border-top:1px solid #ffffff16;
+    background:#04060bdd;
+}
+
+#input{
+    flex:1;
+    min-width:0;
+    border:1px solid #ffffff20;
+    outline:none;
+    border-radius:14px;
+    background:#ffffff07;
+    color:#fff;
+    padding:0 15px;
+    font-size:15px;
+}
+
+#input:focus{
+    border-color:#4eeeff77;
+    box-shadow:0 0 15px #00ffff0c;
+}
+
+.send{
+    border:0;
+    border-radius:14px;
+    padding:0 24px;
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.voice{
+    width:46px;
+    border:1px solid #ffffff18;
+    border-radius:14px;
+    background:#ffffff08;
+    color:#fff;
+    cursor:pointer;
+}
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.panel{
+    position:fixed;
+    z-index:100;
+    right:15px;
+    top:72px;
+    width:290px;
+    display:none;
+    padding:18px;
+    border:1px solid #ffffff18;
+    border-radius:16px;
+    background:#080b13f2;
+    backdrop-filter:blur(20px);
+    box-shadow:0 20px 70px #0008;
+}
+
+.panel h3{
+    margin-top:0;
+}
+
+.panel label{
+    display:block;
+    margin:12px 0 5px;
+    color:#8c9ba5;
+    font-size:11px;
+}
+
+.panel select{
+    width:100%;
+    padding:9px;
+    border-radius:9px;
+    background:#111827;
+    color:#fff;
+    border:1px solid #ffffff18;
+}
+
+.panel button{
+    width:100%;
+    margin-top:12px;
+    padding:9px;
+    border:0;
+    border-radius:9px;
+    cursor:pointer;
+}
+
+/* =========================================================
+   LIGHT
+========================================================= */
+
+body.light #app{
+    background:#eef2f7;
+    color:#111;
+}
+
+body.light .topbar,
+body.light .inputbar,
+body.light .sidebar{
+    background:#ffffffdd;
+    border-color:#0002;
+}
+
+body.light .message{
+    background:#fff;
+    border-color:#0002;
+}
+
+body.light #input{
+    background:#fff;
+    color:#111;
+    border-color:#0003;
+}
+
+body.light .topBtn,
+body.light .mode{
+    color:#111;
+    background:#ffffffaa;
+    border-color:#0002;
+}
+
+body.light .panel{
+    background:#fff;
+    color:#111;
+}
+
+body.light .panel select{
+    color:#111;
+    background:#eee;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:750px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .logo{
+        font-size:15px;
+    }
+
+    .status{
+        display:none;
+    }
+
+    .topBtn{
+        font-size:11px;
+        padding:7px;
+    }
+
+    .chat{
+        padding:12px;
+    }
+
+    .message{
+        font-size:14px;
+    }
+
+    .send{
+        padding:0 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ========================================================
+     INTRO
+========================================================= -->
+
+<section id="intro">
+
+<div class="stars"></div>
+<div class="moon"></div>
+<div class="scan"></div>
+
+<div class="boot">
+<span>[ SYSTEM BOOT ]</span>
+<span>Initializing Moon Core...</span>
+<span>Loading Neural Engine...</span>
+<span>Loading Knowledge Base...</span>
+<span>Loading Voice Module...</span>
+<span>Loading Language Module...</span>
+<span>██████████████████ 100%</span>
+<span>[ SECURITY CHECK ]</span>
+<span>✓ Core System</span>
+<span>✓ Neural Engine</span>
+<span>✓ Knowledge Base</span>
+<span>✓ Voice Module</span>
+<span>✓ Language Module</span>
+<span>&gt; CONNECTION ESTABLISHED</span>
+</div>
+
+<div class="mainTitle">
+<h1>MOONBOT V6</h1>
+<p>ARTIFICIAL INTELLIGENCE SYSTEM</p>
+<p>NEURAL CORE • ONLINE</p>
+<p>KNOWLEDGE SYSTEM • ONLINE</p>
+<p>CREATED BY NAZREEL • 2026</p>
+</div>
+
+<button class="enterButton" onclick="enterMoon()">ENTER</button>
+
+</section>
+
+
+<!-- ========================================================
+     APP
+========================================================= -->
+
+<section id="app">
+
+<header class="topbar">
+
+<div class="logo">🌙 MOONBOT V6</div>
+
+<div class="status">● SYSTEM ONLINE</div>
+
+<div class="topActions">
+<button class="topBtn" onclick="togglePanel()">⚙</button>
+<button class="topBtn" onclick="newChat()">＋</button>
+</div>
+
+</header>
+
+
+<div class="main">
+
+<aside class="sidebar">
+
+<div class="sideTitle">RESPONSE MODE</div>
+
+<button class="mode" data-mode="FAST" onclick="setMode('FAST')">
+⚡ FAST
+</button>
+
+<button class="mode active" data-mode="STANDARD" onclick="setMode('STANDARD')">
+🟢 STANDARD
+</button>
+
+<button class="mode" data-mode="MEDIUM" onclick="setMode('MEDIUM')">
+🧠 MEDIUM
+</button>
+
+<div class="info">
+<b>FAST</b><br>
+Jawapan pantas dan ringkas.<br><br>
+
+<b>STANDARD</b><br>
+Seimbang antara kelajuan dan maklumat.<br><br>
+
+<b>MEDIUM</b><br>
+Jawapan lebih terperinci dengan penerangan tambahan.
+</div>
+
+</aside>
+
+
+<section class="chatArea">
+
+<div class="chat" id="chat"></div>
+
+<div class="inputbar">
+
+<button class="voice" onclick="voiceInput()" title="Voice input">
+🎙️
+</button>
+
+<input
+id="input"
+autocomplete="off"
+placeholder="Taip soalan kepada MoonBot..."
+>
+
+<button class="send" onclick="send()">SEND</button>
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- SETTINGS -->
+
+<div class="panel" id="panel">
+
+<h3>MOONBOT SETTINGS</h3>
+
+<label>Theme</label>
+
+<select id="theme" onchange="changeTheme()">
+<option value="dark">Dark</option>
+<option value="light">White</option>
+</select>
+
+
+<label>Mood</label>
+
+<select id="mood">
+<option value="Biasa">Biasa</option>
+<option value="Gembira">Gembira</option>
+<option value="Sedih">Sedih</option>
+<option value="Marah">Marah</option>
+</select>
+
+
+<label>Language</label>
+
+<select id="language">
+<option value="ms">Bahasa Melayu</option>
+<option value="en">English</option>
+<option value="es">Spanish</option>
+<option value="fr">French</option>
+<option value="ja">Japanese</option>
+<option value="zh">Chinese</option>
+<option value="ko">Korean</option>
+</select>
+
+
+<button onclick="clearChat()">CLEAR CHAT</button>
+
+</div>
+
+</section>
+
+
+<script>
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+document.querySelectorAll(".boot span").forEach((item,index)=>{
+
+    setTimeout(()=>{
+        item.classList.add("show");
+    },500 + index * 360);
+
+});
+
+
+function enterMoon(){
+
+    const intro=document.getElementById("intro");
+    const app=document.getElementById("app");
+
+    intro.style.opacity="0";
+
+    setTimeout(()=>{
+
+        intro.style.display="none";
+        app.style.display="block";
+
+        loadChat();
+
+        document.getElementById("input").focus();
+
+    },1100);
+}
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let responseMode=
+localStorage.getItem("moon_mode") || "STANDARD";
+
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+
+
+/* =========================================================
+   MODE
+========================================================= */
+
+function setMode(mode){
+
+    responseMode=mode;
+
+    localStorage.setItem("moon_mode",mode);
+
+    document.querySelectorAll(".mode").forEach(button=>{
+
+        button.classList.toggle(
+            "active",
+            button.dataset.mode===mode
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   CHAT UI
+========================================================= */
+
+function addMessage(text,type="bot"){
+
+    const box=document.createElement("div");
+
+    box.className="message "+type;
+
+    if(type==="bot"){
+
+        box.innerHTML=
+        '<div class="label">MOONBOT V6</div>'+
+        escapeHTML(text);
+
+    }else{
+
+        box.innerHTML=
+        '<div class="label">YOU</div>'+
+        escapeHTML(text);
+
+    }
+
+    chat.appendChild(box);
+
+    chat.scrollTop=chat.scrollHeight;
+
+}
+
+
+function escapeHTML(text){
+
+    return String(text)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+
+}
+
+
+/* =========================================================
+   SEND
+========================================================= */
+
+function send(){
+
+    const text=input.value.trim();
+
+    if(!text)return;
+
+    addMessage(text,"user");
+
+    input.value="";
+
+    const typing=document.createElement("div");
+
+    typing.className="message bot";
+
+    typing.innerHTML=
+    '<div class="label">MOONBOT V6</div>'+
+    '<span class="typing">● ● ● processing...</span>';
+
+    chat.appendChild(typing);
+
+    chat.scrollTop=chat.scrollHeight;
+
+
+    let delay=250;
+
+    if(responseMode==="STANDARD") delay=600;
+    if(responseMode==="MEDIUM") delay=1200;
+
+    setTimeout(()=>{
+
+        const answer=brain(text);
+
+        typing.innerHTML=
+        '<div class="label">MOONBOT V6</div>'+
+        escapeHTML(answer);
+
+        saveChat();
+
+        chat.scrollTop=chat.scrollHeight;
+
+        speak(answer);
+
+    },delay);
+
+}
+
+
+input.addEventListener("keydown",function(e){
+
+    if(e.key==="Enter" && !e.shiftKey){
+
+        e.preventDefault();
+
+        send();
+
+    }
+
+});
+
+
+/* =========================================================
+   LOCAL CHAT HISTORY
+========================================================= */
+
+function saveChat(){
+
+    localStorage.setItem(
+        "moonbot_chat",
+        chat.innerHTML
+    );
+
+}
+
+
+function loadChat(){
+
+    const saved=localStorage.getItem("moonbot_chat");
+
+    if(saved){
+
+        chat.innerHTML=saved;
+
+    }else{
+
+        addMessage(
+`🌙 MOONBOT V6 ULTRA ONLINE
+
+Connection established.
+
+Aku ialah MoonBot V6.
+
+Mode:
+⚡ FAST
+🟢 STANDARD
+🧠 MEDIUM
+
+Aku boleh membantu dengan:
+• Bahasa Melayu
+• English
+• Matematik
+• Sains
+• Sejarah
+• Geografi
+• PKSK
+• RBT / ICT
+• Coding
+• Sukan
+• Pengetahuan am
+• Bahasa asing
+• Logik
+• Psikometrik
+
+Taip soalan kau untuk mula.`
+        );
+
+    }
+
+}
+
+
+function newChat(){
+
+    chat.innerHTML="";
+
+    localStorage.removeItem("moonbot_chat");
+
+    addMessage(
+        "🌙 New Moon Core session started. Sistem sedia digunakan."
+    );
+
+}
+
+
+/* =========================================================
+   ADVANCED NORMALIZER
+========================================================= */
+
+function normalize(text){
+
+    let q=text.toLowerCase();
+
+    const replacements={
+
+        "ape":"apa",
+        "ap":"apa",
+        "sape":"siapa",
+        "siape":"siapa",
+        "camne":"macam mana",
+        "cmne":"macam mana",
+        "mcm":"macam",
+        "nk":"nak",
+        "nak":"nak",
+        "tk":"tak",
+        "x":"tak",
+        "xde":"tak ada",
+        "takde":"tak ada",
+        "dh":"dah",
+        "dah":"dah",
+        "jer":"sahaja",
+        "je":"sahaja",
+        "yg":"yang",
+        "dgn":"dengan",
+        "kat":"di",
+        "kn":"kan",
+        "ker":"ke",
+        "weh":"wei",
+        "wei":"wei",
+        "bro":"bro"
+
+    };
+
+    const words=q.split(/\s+/);
+
+    return words.map(word=>{
+
+        return replacements[word] || word;
+
+    }).join(" ");
+
+}
+
+
+/* =========================================================
+   MAIN BRAIN
+========================================================= */
+
+function brain(original){
+
+    const q=normalize(original);
+
+    /* GREETINGS */
+
+    if(
+        /^(hai|hello|helo|hi|hey|wei|yo|bro)\b/.test(q)
+    ){
+
+        return mood(
+            "Hai! 👋 MoonBot V6 sedia membantu. Apa soalan kau?"
+        );
+
+    }
+
+
+    /* IDENTITY */
+
+    if(
+        q.includes("siapa kau") ||
+        q.includes("siapa awak") ||
+        q.includes("apa itu moonbot")
+    ){
+
+        return `Aku MoonBot V6 🌙
+
+Aku ialah chatbot berasaskan HTML, CSS dan JavaScript yang dibangunkan sebagai projek Nazreel pada tahun 2026.
+
+Aku mempunyai knowledge engine tempatan dan beberapa fungsi interaktif.`;
+
+    }
+
+
+    if(
+        q.includes("siapa pencipta") ||
+        q.includes("siapa buat moonbot") ||
+        q.includes("creator moonbot")
+    ){
+
+        return "MoonBot dicipta oleh Nazreel pada tahun 2026 dengan bantuan ChatGPT.";
+
+    }
+
+
+    /* MALAYSIA */
+
+    if(
+        q.includes("berapa negeri malaysia") ||
+        q.includes("malaysia ada berapa negeri")
+    ){
+
+        return "Malaysia mempunyai 13 negeri dan 3 Wilayah Persekutuan.";
+
+    }
+
+
+    if(
+        q.includes("ibu negara malaysia") ||
+        q.includes("capital malaysia")
+    ){
+
+        return "Kuala Lumpur ialah ibu negara Malaysia. Putrajaya pula merupakan pusat pentadbiran Persekutuan.";
+
+    }
+
+
+    if(q.includes("malaysia")){
+
+        return `Malaysia ialah sebuah negara di Asia Tenggara.
+
+Malaysia terdiri daripada:
+• Semenanjung Malaysia
+• Sabah
+• Sarawak
+
+Malaysia mempunyai 13 negeri dan 3 Wilayah Persekutuan.`;
+
+    }
+
+
+    /* HISTORY */
+
+    if(q.includes("tunku abdul rahman")){
+
+        return `Tunku Abdul Rahman Putra Al-Haj merupakan tokoh penting dalam sejarah kemerdekaan Malaysia.
+
+Beliau merupakan Perdana Menteri pertama Persekutuan Tanah Melayu dan kemudian Malaysia.`;
+
+    }
+
+
+    if(
+        q.includes("bendahara") &&
+        q.includes("sultan mansur")
+    ){
+
+        return "Jawapan: Tun Perak.";
+
+    }
+
+
+    if(q.includes("kesultanan melaka")){
+
+        return `Kesultanan Melayu Melaka ialah sebuah kerajaan Melayu yang terkenal sebagai pusat perdagangan penting di Asia Tenggara.
+
+Melaka berkembang kerana kedudukannya yang strategik di Selat Melaka.`;
+
+    }
+
+
+    /* GEOGRAPHY */
+
+    if(q.includes("pulau terbesar malaysia")){
+
+        return "Pulau Banggi di Sabah ialah pulau terbesar di Malaysia.";
+
+    }
+
+
+    if(q.includes("kalimantan")){
+
+        return `Kalimantan ialah nama bagi bahagian pulau Borneo yang terletak terutamanya di Indonesia.
+
+Ejaan yang betul ialah "Kalimantan" dengan huruf K besar kerana merupakan nama khas.`;
+
+    }
+
+
+    if(q.includes("khatulistiwa")){
+
+        return "Garisan Khatulistiwa ialah garisan latitud 0° yang membahagikan Bumi kepada Hemisfera Utara dan Hemisfera Selatan.";
+
+    }
+
+
+    /* SCIENCE */
+
+    if(q.includes("fotosintesis")){
+
+        return `Fotosintesis ialah proses tumbuhan hijau menghasilkan makanan.
+
+Tumbuhan menggunakan:
+• cahaya matahari
+• air
+• karbon dioksida
+
+Oksigen turut dibebaskan sebagai hasil proses tersebut.`;
+
+    }
+
+
+    if(
+        q.includes("planet terbesar") ||
+        q.includes("planet paling besar")
+    ){
+
+        return "Planet terbesar dalam Sistem Suria ialah Musytari (Jupiter).";
+
+    }
+
+
+    if(
+        q.includes("planet paling dekat") &&
+        q.includes("matahari")
+    ){
+
+        return "Planet yang paling dekat dengan Matahari ialah Utarid (Mercury).";
+
+    }
+
+
+    if(q.includes("sistem suria")){
+
+        return `Sistem Suria terdiri daripada Matahari dan objek-objek yang mengorbitnya.
+
+Terdapat 8 planet:
+1. Utarid
+2. Zuhrah
+3. Bumi
+4. Marikh
+5. Musytari
+6. Zuhal
+7. Uranus
+8. Neptun`;
+
+    }
+
+
+    if(q.includes("jerebu")){
+
+        return `Jerebu berlaku apabila udara mengandungi banyak zarah dan bahan pencemar.
+
+Kesan jerebu boleh termasuk:
+• mata pedih
+• batuk
+• sakit tekak
+• kesukaran bernafas
+• jarak penglihatan berkurang`;
+
+    }
+
+
+    /* BM */
+
+    if(q.includes("kata nafi")){
+
+        return `Kata nafi utama:
+
+• tidak — biasanya untuk kata kerja atau kata adjektif
+Contoh: Dia tidak pergi.
+
+• bukan — biasanya untuk kata nama atau frasa nama
+Contoh: Itu bukan buku saya.`;
+
+    }
+
+
+    if(q.includes("kata hubung")){
+
+        return `Kata hubung digunakan untuk menghubungkan perkataan atau ayat.
+
+Contoh:
+• dan
+• tetapi
+• kerana
+• atau
+• sambil
+• supaya
+• apabila`;
+
+    }
+
+
+    if(q.includes("nama khas")){
+
+        return "Nama khas ialah nama khusus bagi orang, tempat, institusi atau benda tertentu dan biasanya menggunakan huruf besar.";
+
+    }
+
+
+    /* ENGLISH */
+
+    if(
+        q.includes("bahasa inggeris") ||
+        q.includes("english")
+    ){
+
+        return `I can help with:
+
+• Grammar
+• Vocabulary
+• Sentence construction
+• Translation
+• Simple comprehension
+• Tenses
+
+Ask me an English question.`;
+
+    }
+
+
+    if(q.includes("translate")){
+
+        return "Sure. Send me the word or sentence you want to translate.";
+
+    }
+
+
+    /* CODING */
+
+    if(q.includes("html")){
+
+        return `HTML = HyperText Markup Language.
+
+HTML digunakan untuk membina struktur laman web.
+
+Contoh:
+<h1>Hello</h1>
+
+akan menghasilkan tajuk "Hello".`;
+
+    }
+
+
+    if(q.includes("css")){
+
+        return `CSS digunakan untuk menggayakan laman web.
+
+Contohnya:
+• warna
+• saiz tulisan
+• layout
+• animasi
+• jarak
+• background`;
+
+    }
+
+
+    if(
+        q.includes("javascript") ||
+        q.includes("js")
+    ){
+
+        return `JavaScript ialah bahasa pengaturcaraan yang boleh menjadikan laman web interaktif.
+
+Contohnya:
+• button
+• chatbot
+• animation
+• calculator
+• game logic`;
+
+    }
+
+
+    if(q.includes("python")){
+
+        return "Python ialah bahasa pengaturcaraan yang terkenal dengan sintaks yang agak mudah dibaca dan digunakan dalam pelbagai bidang.";
+
+    }
+
+
+    if(q.includes("github")){
+
+        return `GitHub ialah platform untuk menyimpan dan mengurus projek kod menggunakan Git.
+
+MoonBot V6 boleh dihoskan menggunakan GitHub Pages jika repository dan tetapan deployment dikonfigurasi dengan betul.`;
+
+    }
+
+
+    if(q.includes("404")){
+
+        return "404 bermaksud halaman atau resource yang diminta tidak ditemui.";
+
+    }
+
+
+    /* PKSK */
+
+    if(q.includes("pksk")){
+
+        return `PKSK ialah Pentaksiran Kemasukan Sekolah Khusus.
+
+Untuk latihan, kau boleh ulang kaji:
+• Bahasa Melayu
+• English
+• Matematik
+• Sains
+• Sejarah
+• Geografi
+• Pengetahuan am
+• Logik
+• Psikometrik
+• Penulisan`;
+
+    }
+
+
+    if(q.includes("psikometrik")){
+
+        return `Untuk soalan psikometrik, jawab dengan jujur dan konsisten berdasarkan diri sendiri.
+
+Jangan cuba mencari jawapan yang nampak "paling sempurna" semata-mata.`;
+
+    }
+
+
+    /* SPORTS */
+
+    if(q.includes("ronaldo")){
+
+        return "Cristiano Ronaldo ialah pemain bola sepak Portugal yang terkenal di peringkat antarabangsa.";
+
+    }
+
+
+    if(q.includes("messi")){
+
+        return "Lionel Messi ialah pemain bola sepak Argentina yang terkenal dengan kawalan bola, hantaran, dribbling dan penyudah.";
+
+    }
+
+
+    if(q.includes("bola sepak")){
+
+        return `Bola sepak ialah sukan berpasukan yang dimainkan oleh dua pasukan.
+
+Objektif utama ialah menjaringkan lebih banyak gol daripada pihak lawan.`;
+
+    }
+
+
+    if(q.includes("futsal")){
+
+        return "Futsal ialah permainan bola sepak versi gelanggang yang biasanya dimainkan dengan lima pemain bagi setiap pasukan di atas gelanggang.";
+
+    }
+
+
+    /* LANGUAGES */
+
+    if(q.includes("spanish")){
+
+        return "Spanish 🇪🇸\nHola = Hai\nGracias = Terima kasih\nBuenos días = Selamat pagi";
+
+    }
+
+
+    if(q.includes("french")){
+
+        return "French 🇫🇷\nBonjour = Hai / Selamat pagi\nMerci = Terima kasih";
+
+    }
+
+
+    if(q.includes("japanese")){
+
+        return "Japanese 🇯🇵\nこんにちは (Konnichiwa) = Hai\nありがとう (Arigatou) = Terima kasih";
+
+    }
+
+
+    if(q.includes("chinese")){
+
+        return "Chinese 🇨🇳\n你好 (Nǐ hǎo) = Hai\n谢谢 (Xièxie) = Terima kasih";
+
+    }
+
+
+    if(q.includes("korean")){
+
+        return "Korean 🇰🇷\n안녕하세요 (Annyeonghaseyo) = Hai\n감사합니다 (Gamsahamnida) = Terima kasih";
+
+    }
+
+
+    /* MATH */
+
+    const math=calculateMath(q);
+
+    if(math!==null){
+
+        return math;
+
+    }
+
+
+    /* GENERAL */
+
+    if(q.includes("haiwan")){
+
+        return "Haiwan ialah organisma hidup daripada alam haiwan. Contohnya kucing, burung, ikan, gajah dan harimau.";
+
+    }
+
+
+    if(q.includes("batu")){
+
+        return "Batu ialah bahan pepejal semula jadi yang biasanya terdiri daripada satu atau lebih mineral.";
+
+    }
+
+
+    if(q.includes("sejarah")){
+
+        return "Sejarah ialah kajian tentang peristiwa dan perkembangan manusia serta masyarakat pada masa lampau.";
+
+    }
+
+
+    if(q.includes("geografi")){
+
+        return "Geografi mengkaji tempat, ruang, manusia, alam sekitar dan hubungan antara unsur-unsur tersebut.";
+
+    }
+
+
+    if(q.includes("sains")){
+
+        return "Sains mengkaji alam semula jadi melalui pemerhatian, penyiasatan, eksperimen dan bukti.";
+
+    }
+
+
+    /* THANKS */
+
+    if(
+        q.includes("terima kasih") ||
+        q.includes("thanks")
+    ){
+
+        return mood("Sama-sama! 🌙");
+
+    }
+
+
+    /* FALLBACK */
+
+    return fallback(original);
+
+}
+
+
+/* =========================================================
+   MATH ENGINE
+========================================================= */
+
+function calculateMath(q){
+
+    let m;
+
+    /* addition */
+
+    m=q.match(/(\d+(?:\.\d+)?)\s*\+\s*(\d+(?:\.\d+)?)/);
+
+    if(m){
+
+        return "Jawapan: "+
+        (Number(m[1])+Number(m[2]));
+
+    }
+
+
+    /* subtraction */
+
+    m=q.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/);
+
+    if(m){
+
+        return "Jawapan: "+
+        (Number(m[1])-Number(m[2]));
+
+    }
+
+
+    /* multiplication */
+
+    m=q.match(
+        /(\d+(?:\.\d+)?)\s*(?:x|\*|×)\s*(\d+(?:\.\d+)?)/
+    );
+
+    if(m){
+
+        return "Jawapan: "+
+        (Number(m[1])*Number(m[2]));
+
+    }
+
+
+    /* division */
+
+    m=q.match(
+        /(\d+(?:\.\d+)?)\s*(?:÷|\/)\s*(\d+(?:\.\d+)?)/
+    );
+
+    if(m && Number(m[2])!==0){
+
+        return "Jawapan: "+
+        (Number(m[1])/Number(m[2]));
+
+    }
+
+
+    /* percentage */
+
+    m=q.match(
+        /(\d+(?:\.\d+)?)\s*(?:daripada|of)\s*(\d+(?:\.\d+)?)/
+    );
+
+    if(m){
+
+        return "Jawapan: "+
+        ((Number(m[1])/Number(m[2]))*100)+
+        "%";
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   FALLBACK BY MODE
+========================================================= */
+
+function fallback(question){
+
+    if(responseMode==="FAST"){
+
+        return "Aku belum jumpa jawapan untuk soalan tu dalam knowledge base V6.";
+
+    }
+
+
+    if(responseMode==="MEDIUM"){
+
+        return `Aku belum mempunyai maklumat khusus untuk soalan itu dalam knowledge base tempatan MoonBot V6.
+
+Cuba:
+• tulis soalan dengan lebih jelas
+• gunakan kata kunci utama
+• atau pecahkan soalan kepada bahagian kecil
+
+Nota: V6 ini belum menggunakan model AI internet sebenar, jadi pengetahuannya bergantung pada knowledge yang diprogramkan.`;
+
+    }
+
+
+    return "Aku belum mempunyai jawapan khusus untuk soalan itu dalam knowledge base MoonBot V6. Cuba ubah sedikit cara soalan itu ditulis.";
+
+}
+
+
+/* =========================================================
+   MOOD
+========================================================= */
+
+function mood(text){
+
+    const m=document.getElementById("mood").value;
+
+    if(m==="Gembira")
+        return text+" 😎🔥";
+
+    if(m==="Sedih")
+        return text+" 🌙";
+
+    if(m==="Marah")
+        return text.toUpperCase();
+
+    return text;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function togglePanel(){
+
+    const p=document.getElementById("panel");
+
+    p.style.display=
+    p.style.display==="block"
+    ?"none"
+    :"block";
+
+}
+
+
+function changeTheme(){
+
+    const value=document.getElementById("theme").value;
+
+    if(value==="light")
+        document.body.classList.add("light");
+    else
+        document.body.classList.remove("light");
+
+    localStorage.setItem("moon_theme",value);
+
+}
+
+
+const savedTheme=
+localStorage.getItem("moon_theme");
+
+if(savedTheme){
+
+    document.getElementById("theme").value=savedTheme;
+
+    changeTheme();
+
+}
+
+
+/* =========================================================
+   VOICE INPUT
+========================================================= */
+
+function voiceInput(){
+
+    const SpeechRecognition=
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+    if(!SpeechRecognition){
+
+        alert(
+            "Voice input tidak disokong oleh browser ini."
+        );
+
+        return;
+
+    }
+
+    const recognition=new SpeechRecognition();
+
+    recognition.lang="ms-MY";
+    recognition.interimResults=false;
+
+    recognition.start();
+
+    recognition.onresult=function(event){
+
+        const result=
+        event.results[0][0].transcript;
+
+        input.value=result;
+
+        send();
+
+    };
+
+}
+
+
+/* =========================================================
+   VOICE OUTPUT
+========================================================= */
+
+function speak(text){
+
+    if(
+        !("speechSynthesis" in window)
+    )return;
+
+    if(responseMode==="FAST")return;
+
+    const utterance=
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang="ms-MY";
+    utterance.rate=
+        responseMode==="MEDIUM"
+        ?0.95
+        :1.05;
+
+    speechSynthesis.cancel();
+
+    speechSynthesis.speak(utterance);
+
+}
+
+
+/* =========================================================
+   LOAD MODE
+========================================================= */
+
+setMode(responseMode);
+
+</script>
+
+</body>
+</html>
+```
